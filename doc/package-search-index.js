@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.infinitekind.moneydance.model"},{"l":"com.infinitekind.moneydance.model.txtimport"},{"l":"com.infinitekind.util"},{"l":"com.moneydance.apps.md.controller.bot"},{"l":"com.moneydance.apps.md.extensionapi"},{"l":"com.moneydance.awt"}]

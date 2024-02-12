@@ -1,0 +1,8 @@
+com.infinitekind.moneydance.model
+com.infinitekind.moneydance.model.txtimport
+com.infinitekind.util
+com.moneydance.apps.md.controller
+com.moneydance.apps.md.controller.bot
+com.moneydance.apps.md.extensionapi
+com.moneydance.apps.md.view
+com.moneydance.awt
