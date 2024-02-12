@@ -5,6 +5,7 @@
 package com.moneydance.modules.features.myextension;
 
 import com.ecasillas.moneydance.Action;
+import com.moneydance.apps.md.controller.FeatureModuleContext;
 import com.moneydance.awt.*;
 import com.infinitekind.moneydance.model.*;
 
@@ -27,13 +28,13 @@ public class AccountListWindow
 
   private Action onClose;
 
-  public AccountListWindow(Main extension, Action onClose) {
+  public AccountListWindow(FeatureModuleContext context, Action onClose) {
     super("Account List Console");
     this.onClose = onClose;
 
     accountListArea = new JTextArea();
     
-    AccountBook book = extension.getUnprotectedContext().getCurrentAccountBook();
+    AccountBook book = context.getCurrentAccountBook();
     StringBuffer acctStr = new StringBuffer();
     if(book !=null) {
       addSubAccounts(book.getRootAccount(), acctStr);

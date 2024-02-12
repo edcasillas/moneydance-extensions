@@ -85,7 +85,7 @@ public class Main
 
   private synchronized void showConsole() {
     if(accountListWindow==null) {
-      accountListWindow = new AccountListWindow(this, this::closeConsole);
+      accountListWindow = new AccountListWindow(getContext(), this::closeConsole);
       accountListWindow.setVisible(true);
     }
     else {
@@ -93,10 +93,6 @@ public class Main
       accountListWindow.toFront();
       accountListWindow.requestFocus();
     }
-  }
-  
-  FeatureModuleContext getUnprotectedContext() {
-    return getContext();
   }
 
   synchronized void closeConsole() {
