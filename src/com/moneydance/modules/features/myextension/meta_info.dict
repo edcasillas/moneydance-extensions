@@ -1,6 +1,6 @@
 {
-  "vendor" = "Your Name Here"
-  "module_build" = "1"
+  "vendor" = "Ed Casillas"
+  "module_build" = "2"
   "minbuild" = "1000"
   "vendor.url" = "http://your.url.here/"
   "module_name" = "My Extension"

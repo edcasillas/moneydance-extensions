@@ -4,6 +4,8 @@
 
 package com.moneydance.modules.features.myextension;
 
+import com.infinitekind.moneydance.model.Account;
+import com.infinitekind.moneydance.model.AccountBook;
 import com.moneydance.apps.md.controller.FeatureModule;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 import com.moneydance.apps.md.controller.ModuleUtil;
@@ -85,7 +87,8 @@ public class Main
 
   private synchronized void showConsole() {
     if(accountListWindow==null) {
-      accountListWindow = new AccountListWindow(getContext(), this::closeConsole);
+      StringBuffer sb = getAccountsStringBuffer();
+      accountListWindow = new AccountListWindow("Account List Console", getContext(), this::closeConsole, sb);
       accountListWindow.setVisible(true);
     }
     else {
@@ -102,6 +105,27 @@ public class Main
       System.gc();
     }
   }
+
+  private StringBuffer getAccountsStringBuffer() {
+    AccountBook book = getContext().getCurrentAccountBook();
+    StringBuffer acctStr = new StringBuffer();
+    acctStr.append("Hola! \n");
+    if(book !=null) {
+      addSubAccounts(book.getRootAccount(), acctStr);
+    }
+    return acctStr;
+  }
+
+  public static void addSubAccounts(Account parentAcct, StringBuffer acctStr) {
+    int sz = parentAcct.getSubAccountCount();
+    for(int i=0; i<sz; i++) {
+      Account acct = parentAcct.getSubAccount(i);
+      acctStr.append(acct.getFullAccountName());
+      acctStr.append("\n");
+      addSubAccounts(acct, acctStr);
+    }
+  }
+
 }
 
 

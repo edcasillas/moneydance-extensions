@@ -21,26 +21,20 @@ public class AccountListWindow
   extends JFrame
   implements ActionListener
 {
-  private JTextArea accountListArea;
+  private JTextArea textArea;
   private JButton clearButton;
   private JButton closeButton;
   private JTextField inputArea;
 
   private Action onClose;
 
-  public AccountListWindow(FeatureModuleContext context, Action onClose) {
-    super("Account List Console");
+  public AccountListWindow(String title, FeatureModuleContext context, Action onClose, StringBuffer acctStr) {
+    super(title);
     this.onClose = onClose;
 
-    accountListArea = new JTextArea();
-    
-    AccountBook book = context.getCurrentAccountBook();
-    StringBuffer acctStr = new StringBuffer();
-    if(book !=null) {
-      addSubAccounts(book.getRootAccount(), acctStr);
-    }
-    accountListArea.setEditable(false);
-    accountListArea.setText(acctStr.toString());
+    textArea = new JTextArea();
+    textArea.setEditable(false);
+    textArea.setText(acctStr.toString());
     inputArea = new JTextField();
     inputArea.setEditable(true);
     clearButton = new JButton("Clear");
@@ -48,7 +42,7 @@ public class AccountListWindow
 
     JPanel p = new JPanel(new GridBagLayout());
     p.setBorder(new EmptyBorder(10,10,10,10));
-    p.add(new JScrollPane(accountListArea), AwtUtil.getConstraints(0,0,1,1,4,1,true,true));
+    p.add(new JScrollPane(textArea), AwtUtil.getConstraints(0,0,1,1,4,1,true,true));
     p.add(Box.createVerticalStrut(8), AwtUtil.getConstraints(0,2,0,0,1,1,false,false));
     p.add(clearButton, AwtUtil.getConstraints(0,3,1,0,1,1,false,true));
     p.add(closeButton, AwtUtil.getConstraints(1,3,1,0,1,1,false,true));
@@ -63,6 +57,15 @@ public class AccountListWindow
 
     setSize(500, 400);
     AwtUtil.centerWindow(this);
+  }
+
+  private static StringBuffer getAccountsStringBuffer(FeatureModuleContext context) {
+    AccountBook book = context.getCurrentAccountBook();
+    StringBuffer acctStr = new StringBuffer();
+    if(book !=null) {
+      addSubAccounts(book.getRootAccount(), acctStr);
+    }
+    return acctStr;
   }
 
   public static void addSubAccounts(Account parentAcct, StringBuffer acctStr) {
@@ -82,7 +85,7 @@ public class AccountListWindow
       onClose.Invoke();
     }
     if(src==clearButton) {
-      accountListArea.setText("");
+      textArea.setText("");
     }
   }
 
@@ -103,18 +106,18 @@ public class AccountListWindow
     public void write(int b)
       throws IOException
     {
-      accountListArea.append(String.valueOf((char)b));
+      textArea.append(String.valueOf((char)b));
       repaint();
     }
 
     public void write(byte[] b)
       throws IOException
     {
-      accountListArea.append(new String(b));
+      textArea.append(new String(b));
       repaint();
     }
     public void run() {
-      accountListArea.repaint();
+      textArea.repaint();
     }
   }
 
