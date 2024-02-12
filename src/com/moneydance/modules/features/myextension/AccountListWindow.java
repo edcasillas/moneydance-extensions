@@ -4,6 +4,7 @@
 
 package com.moneydance.modules.features.myextension;
 
+import com.ecasillas.moneydance.Action;
 import com.moneydance.awt.*;
 import com.infinitekind.moneydance.model.*;
 
@@ -19,15 +20,16 @@ public class AccountListWindow
   extends JFrame
   implements ActionListener
 {
-  private Main extension;
   private JTextArea accountListArea;
   private JButton clearButton;
   private JButton closeButton;
   private JTextField inputArea;
 
-  public AccountListWindow(Main extension) {
+  private Action onClose;
+
+  public AccountListWindow(Main extension, Action onClose) {
     super("Account List Console");
-    this.extension = extension;
+    this.onClose = onClose;
 
     accountListArea = new JTextArea();
     
@@ -76,7 +78,7 @@ public class AccountListWindow
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
     if(src==closeButton) {
-      extension.closeConsole();
+      onClose.Invoke();
     }
     if(src==clearButton) {
       accountListArea.setText("");
@@ -85,7 +87,7 @@ public class AccountListWindow
 
   public final void processEvent(AWTEvent evt) {
     if(evt.getID()==WindowEvent.WINDOW_CLOSING) {
-      extension.closeConsole();
+      onClose.Invoke();
       return;
     }
     if(evt.getID()==WindowEvent.WINDOW_OPENED) {

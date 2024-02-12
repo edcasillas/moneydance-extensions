@@ -85,7 +85,7 @@ public class Main
 
   private synchronized void showConsole() {
     if(accountListWindow==null) {
-      accountListWindow = new AccountListWindow(this);
+      accountListWindow = new AccountListWindow(this, this::closeConsole);
       accountListWindow.setVisible(true);
     }
     else {

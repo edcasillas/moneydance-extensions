@@ -38,7 +38,10 @@ http://jakarta.apache.org/ant/index.html
   <target name="myextension" depends="init">
     <javac srcdir="${src}" debug="${debug}" optimize="${optimize}"
       classpathref="classpath"  destdir="${build}"
-      includes="com/moneydance/modules/features/myextension/**"/>
+      includes="
+      com/moneydance/modules/features/myextension/**
+      com/ecasillas/moneydance/**
+"/>
 
     <jar destfile="${dist}/myextension.mxt">
       <fileset dir="${src}" includes="
@@ -46,7 +49,10 @@ http://jakarta.apache.org/ant/index.html
              com/moneydance/modules/features/myextension/*.gif
              com/moneydance/modules/features/myextension/*.jpg
              com/moneydance/modules/features/myextension/*.jpeg"/>
-      <fileset dir="${build}" includes="com/moneydance/modules/features/myextension/**"/>
+      <fileset dir="${build}" includes="
+      com/moneydance/modules/features/myextension/**
+      com/ecasillas/moneydance/**
+"/>
     </jar>
 
     <java newenvironment="true" 
