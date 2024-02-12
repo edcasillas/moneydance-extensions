@@ -14,6 +14,9 @@ import com.moneydance.apps.md.controller.FeatureModuleContext;
 import java.io.*;
 import java.awt.*;
 
+import static java.lang.Math.exp;
+import static java.lang.Math.pow;
+
 /** Pluggable module used to give users access to a Account List
     interface to Moneydance.
 */
@@ -109,16 +112,25 @@ public class Main
   private StringBuffer getAccountsStringBuffer() {
     AccountBook book = getContext().getCurrentAccountBook();
     StringBuffer acctStr = new StringBuffer();
-    if(book !=null) {
+    if(book != null) {
       Account rootAccount = book.getRootAccount();
       acctStr.append(rootAccount.getFullAccountName());
       acctStr.append("\n");
       addSubAccounts(book.getRootAccount(), acctStr, 1);
+
+      acctStr.append("\n");
+      CurrencyTable currencies = book.getCurrencies();
+      CurrencyType mainCurrency = currencies.getBaseType();
+      CurrencyType pesoCurrency = currencies.getCurrencyByIDString("MXN");
+
+      acctStr.append("Main currency: " + mainCurrency.getIDString() + "\n");
+      acctStr.append("Main to Peso rate: " + mainCurrency.getRate(pesoCurrency) + "\n");
+      acctStr.append("Peso to main rate: " + pesoCurrency.getRate(mainCurrency) + "\n");
     }
     return acctStr;
   }
 
-  public static void addSubAccounts(Account parentAcct, StringBuffer acctStr, int indentLevel) {
+  public void addSubAccounts(Account parentAcct, StringBuffer acctStr, int indentLevel) {
     int sz = parentAcct.getSubAccountCount();
     for(int i=0; i<sz; i++) {
       Account acct = parentAcct.getSubAccount(i);
@@ -136,14 +148,34 @@ public class Main
     }
   }
 
-  private static void appendAccountText(StringBuffer sb, Account account){
+  private void appendAccountText(StringBuffer sb, Account account){
     CurrencyType currencyType = account.getCurrencyType();
+    long balance = account.getBalance();
 
     sb.append(account.getFullAccountName());
     sb.append(" (");
     sb.append(account.getAccountType());
     sb.append("): ");
-    sb.append(currencyType.formatFancy(account.getBalance(), '.'));
+    sb.append(currencyType.getIDString());
+    sb.append(currencyType.formatFancy(balance, '.'));
+    sb.append(" " + currencyType.getDecimalPlaces());
+
+    CurrencyType mainCurrency = getMainCurrencyType();
+    if(currencyType != mainCurrency) {
+      sb.append(" - ");
+      double convertibleBalance = balance / pow(10, currencyType.getDecimalPlaces());
+      double convertedBalance = mainCurrency.getRate(currencyType) * convertibleBalance;
+      long parsedConvertedBalance = mainCurrency.parse(Double.toString(convertedBalance), '.');
+      sb.append(mainCurrency.getIDString());
+      sb.append(mainCurrency.formatFancy(parsedConvertedBalance, '.'));
+    }
+  }
+
+  private CurrencyType getMainCurrencyType(){
+    AccountBook book = getContext().getCurrentAccountBook();
+    CurrencyTable currencies = book.getCurrencies();
+    CurrencyType mainCurrency = currencies.getBaseType();
+    return mainCurrency;
   }
 
   private double calculateNetWorthInPesos(StringBuffer sb) {
