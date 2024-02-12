@@ -8,12 +8,8 @@ import com.infinitekind.moneydance.model.Account;
 import com.infinitekind.moneydance.model.AccountBook;
 import com.moneydance.apps.md.controller.FeatureModule;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
-import com.moneydance.apps.md.controller.ModuleUtil;
-import com.moneydance.apps.md.controller.UserPreferences;
 
 import java.io.*;
-import java.util.*;
-import java.text.*;
 import java.awt.*;
 
 /** Pluggable module used to give users access to a Account List
@@ -23,7 +19,7 @@ import java.awt.*;
 public class Main
   extends FeatureModule
 {
-  private AccountListWindow accountListWindow = null;
+  private ConsoleWindow consoleWindow = null;
 
   public void init() {
     // the first thing we will do is register this module to be invoked
@@ -86,22 +82,22 @@ public class Main
   }
 
   private synchronized void showConsole() {
-    if(accountListWindow==null) {
+    if(consoleWindow ==null) {
       StringBuffer sb = getAccountsStringBuffer();
-      accountListWindow = new AccountListWindow("Account List Console", getContext(), this::closeConsole, sb);
-      accountListWindow.setVisible(true);
+      consoleWindow = new ConsoleWindow("Account List Console", this::closeConsole, sb);
+      consoleWindow.setVisible(true);
     }
     else {
-      accountListWindow.setVisible(true);
-      accountListWindow.toFront();
-      accountListWindow.requestFocus();
+      consoleWindow.setVisible(true);
+      consoleWindow.toFront();
+      consoleWindow.requestFocus();
     }
   }
 
   synchronized void closeConsole() {
-    if(accountListWindow!=null) {
-      accountListWindow.goAway();
-      accountListWindow = null;
+    if(consoleWindow !=null) {
+      consoleWindow.goAway();
+      consoleWindow = null;
       System.gc();
     }
   }
@@ -109,7 +105,7 @@ public class Main
   private StringBuffer getAccountsStringBuffer() {
     AccountBook book = getContext().getCurrentAccountBook();
     StringBuffer acctStr = new StringBuffer();
-    acctStr.append("Hola! \n");
+    acctStr.append("Hola tu! \n");
     if(book !=null) {
       addSubAccounts(book.getRootAccount(), acctStr);
     }

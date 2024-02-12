@@ -1,23 +1,19 @@
-/************************************************************\
- *      Copyright (C) 2016 The Infinite Kind, Limited       *
-\************************************************************/
-
 package com.moneydance.modules.features.myextension;
 
 import com.ecasillas.moneydance.Action;
-import com.moneydance.apps.md.controller.FeatureModuleContext;
-import com.moneydance.awt.*;
-import com.infinitekind.moneydance.model.*;
+import com.moneydance.awt.AwtUtil;
 
-import java.io.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
-/** Window used for Account List interface */
-
-public class AccountListWindow 
+public class ConsoleWindow
   extends JFrame
   implements ActionListener
 {
@@ -28,7 +24,7 @@ public class AccountListWindow
 
   private Action onClose;
 
-  public AccountListWindow(String title, FeatureModuleContext context, Action onClose, StringBuffer acctStr) {
+  public ConsoleWindow(String title, Action onClose, StringBuffer acctStr) {
     super(title);
     this.onClose = onClose;
 
@@ -58,26 +54,6 @@ public class AccountListWindow
     setSize(500, 400);
     AwtUtil.centerWindow(this);
   }
-
-  private static StringBuffer getAccountsStringBuffer(FeatureModuleContext context) {
-    AccountBook book = context.getCurrentAccountBook();
-    StringBuffer acctStr = new StringBuffer();
-    if(book !=null) {
-      addSubAccounts(book.getRootAccount(), acctStr);
-    }
-    return acctStr;
-  }
-
-  public static void addSubAccounts(Account parentAcct, StringBuffer acctStr) {
-    int sz = parentAcct.getSubAccountCount();
-    for(int i=0; i<sz; i++) {
-      Account acct = parentAcct.getSubAccount(i);
-      acctStr.append(acct.getFullAccountName());
-      acctStr.append("\n");
-      addSubAccounts(acct, acctStr);
-    }
-  }
-
 
   public void actionPerformed(ActionEvent evt) {
     Object src = evt.getSource();
