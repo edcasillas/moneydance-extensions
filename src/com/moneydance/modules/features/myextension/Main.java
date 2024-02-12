@@ -6,6 +6,8 @@ package com.moneydance.modules.features.myextension;
 
 import com.infinitekind.moneydance.model.Account;
 import com.infinitekind.moneydance.model.AccountBook;
+import com.infinitekind.moneydance.model.CurrencyTable;
+import com.infinitekind.moneydance.model.CurrencyType;
 import com.moneydance.apps.md.controller.FeatureModule;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 
@@ -84,6 +86,8 @@ public class Main
   private synchronized void showConsole() {
     if(consoleWindow ==null) {
       StringBuffer sb = getAccountsStringBuffer();
+      //StringBuffer sb = new StringBuffer();
+      //double netWorth = calculateNetWorthInPesos(sb);
       consoleWindow = new ConsoleWindow("Account List Console", this::closeConsole, sb);
       consoleWindow.setVisible(true);
     }
@@ -105,21 +109,60 @@ public class Main
   private StringBuffer getAccountsStringBuffer() {
     AccountBook book = getContext().getCurrentAccountBook();
     StringBuffer acctStr = new StringBuffer();
-    acctStr.append("Hola tu! \n");
     if(book !=null) {
-      addSubAccounts(book.getRootAccount(), acctStr);
+      Account rootAccount = book.getRootAccount();
+      acctStr.append(rootAccount.getFullAccountName());
+      acctStr.append("\n");
+      addSubAccounts(book.getRootAccount(), acctStr, 1);
     }
     return acctStr;
   }
 
-  public static void addSubAccounts(Account parentAcct, StringBuffer acctStr) {
+  public static void addSubAccounts(Account parentAcct, StringBuffer acctStr, int indentLevel) {
     int sz = parentAcct.getSubAccountCount();
     for(int i=0; i<sz; i++) {
       Account acct = parentAcct.getSubAccount(i);
-      acctStr.append(acct.getFullAccountName());
+      Account.AccountType acctType = acct.getAccountType();
+
+      if(acctType == Account.AccountType.EXPENSE || acctType == Account.AccountType.INCOME){
+        continue;
+      }
+
+      acctStr.append(" ".repeat(Math.max(0, indentLevel + 1)));
+      appendAccountText(acctStr, acct);
+
       acctStr.append("\n");
-      addSubAccounts(acct, acctStr);
+      addSubAccounts(acct, acctStr, indentLevel + 1);
     }
+  }
+
+  private static void appendAccountText(StringBuffer sb, Account account){
+    CurrencyType currencyType = account.getCurrencyType();
+
+    sb.append(account.getFullAccountName());
+    sb.append(" (");
+    sb.append(account.getAccountType());
+    sb.append("): ");
+    sb.append(currencyType.formatFancy(account.getBalance(), '.'));
+  }
+
+  private double calculateNetWorthInPesos(StringBuffer sb) {
+    double netWorthInPesos = 0.0;
+    AccountBook book = getContext().getCurrentAccountBook();
+    CurrencyTable currencies = book.getCurrencies();
+    CurrencyType mainCurrency = currencies.getBaseType();
+    CurrencyType pesoCurrency = currencies.getCurrencyByIDString("MXN"); // Assuming "MXN" is the correct ID for Mexican Pesos
+
+    for (Account account : book.getRootAccount().getSubAccounts()) {
+      double balance = account.getBalance();
+      if (!account.getCurrencyType().equals(pesoCurrency)) {
+        // Convert balance to pesos
+        balance = mainCurrency.getRate(pesoCurrency) * balance;
+      }
+      netWorthInPesos += balance;
+    }
+
+    return netWorthInPesos;
   }
 
 }
