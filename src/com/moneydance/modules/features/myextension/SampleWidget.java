@@ -5,8 +5,6 @@ import com.infinitekind.moneydance.model.AccountBook;
 import com.infinitekind.moneydance.model.CurrencyType;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 import com.moneydance.apps.md.view.HomePageView;
-import com.moneydance.apps.md.view.gui.MoneydanceLAF;
-import com.moneydance.awt.JCurrencyField;
 
 import javax.swing.*;
 import java.awt.*;

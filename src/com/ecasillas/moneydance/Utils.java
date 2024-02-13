@@ -1,9 +1,6 @@
 package com.ecasillas.moneydance;
 
-import com.infinitekind.moneydance.model.Account;
-import com.infinitekind.moneydance.model.AccountBook;
-import com.infinitekind.moneydance.model.CurrencyTable;
-import com.infinitekind.moneydance.model.CurrencyType;
+import com.infinitekind.moneydance.model.*;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -15,9 +12,8 @@ public class Utils {
         int sz = parent.getSubAccountCount();
         for(int i=0; i<sz; i++) {
             Account acct = parent.getSubAccount(i);
-            Account.AccountType acctType = acct.getAccountType();
 
-            if(acctType == Account.AccountType.EXPENSE || acctType == Account.AccountType.INCOME){
+            if(!acct.shouldBeIncludedInNetWorth()){ // Excludes EXPENSE, INCOME and ROOT account types.
                 continue;
             }
             action.Invoke(acct);
