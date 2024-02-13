@@ -2,6 +2,7 @@ package com.moneydance.modules.features.myextension;
 
 import com.ecasillas.moneydance.Utils;
 import com.infinitekind.moneydance.model.AccountBook;
+import com.infinitekind.moneydance.model.CurrencyType;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 import com.moneydance.apps.md.view.HomePageView;
 import com.moneydance.apps.md.view.gui.MoneydanceLAF;
@@ -10,9 +11,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SampleWidget implements HomePageView {
-    private FeatureModuleContext context;
+    private final FeatureModuleContext context;
     private JPanel panel;
-    private JLabel label;
+    private JLabel usdLabel;
+    private JLabel mxnLabel;
 
     public SampleWidget(FeatureModuleContext context) {
         this.context = context;
@@ -22,9 +24,14 @@ public class SampleWidget implements HomePageView {
     private void createUI() {
         panel = new JPanel(new BorderLayout());
         panel.setBackground(MoneydanceLAF.homePageBorder.getFillColor());
-        long balance = Utils.GetTotalBalance(context);
-        label = new JLabel("This will show something " + balance);
-        panel.add(label, BorderLayout.CENTER);
+
+        usdLabel = new JLabel("USD");
+        panel.add(usdLabel, BorderLayout.CENTER);
+
+        mxnLabel = new JLabel("MXN");
+        panel.add(mxnLabel, BorderLayout.AFTER_LAST_LINE);
+
+        refresh();
     }
 
     @Override
@@ -44,7 +51,25 @@ public class SampleWidget implements HomePageView {
 
     @Override
     public void refresh() {
-        // TODO Change contents of label
+        long balance = Utils.GetTotalBalance(context);
+        CurrencyType baseCurrency = Utils.GetBaseCurrency(context);
+
+        if(baseCurrency == null) {
+            // TODO Handle null
+            return;
+        }
+
+        usdLabel.setText(Utils.FormatSuperFancy(balance, baseCurrency));
+
+        CurrencyType pesoCurrency = Utils.GetCurrencyByID(context,"MXN");
+        long convertedBalance = Utils.ConvertBalance(balance, baseCurrency, pesoCurrency);
+
+        if(pesoCurrency == null) {
+            // TODO Handle null
+            return;
+        }
+
+        mxnLabel.setText(Utils.FormatSuperFancy(convertedBalance, pesoCurrency));
     }
 
     @Override

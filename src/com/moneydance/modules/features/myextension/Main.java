@@ -132,13 +132,11 @@ public class Main
       acctStr.append("\n");
       acctStr.append("TOTAL");
       acctStr.append(" ");
-      acctStr.append(mainCurrency.getIDString());
-      acctStr.append(mainCurrency.formatFancy(totalBalance, '.'));
+      acctStr.append(Utils.FormatSuperFancy(totalBalance, mainCurrency));
 
       acctStr.append("\n");
       acctStr.append(" ");
-      acctStr.append(pesoCurrency.getIDString());
-      acctStr.append(pesoCurrency.formatFancy(Utils.ConvertBalance(totalBalance, mainCurrency, pesoCurrency), '.'));
+      acctStr.append(Utils.FormatSuperFancy(Utils.ConvertBalance(totalBalance, mainCurrency, pesoCurrency), pesoCurrency));
     }
     return acctStr;
   }

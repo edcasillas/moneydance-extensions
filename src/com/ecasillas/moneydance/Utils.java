@@ -55,4 +55,24 @@ public class Utils {
 
         return totalBalance.get();
     }
+
+    public static CurrencyType GetBaseCurrency(FeatureModuleContext context) {
+        AccountBook book = context.getCurrentAccountBook();
+        if(book == null) return null;
+
+        CurrencyTable currencies = book.getCurrencies();
+        return currencies.getBaseType();
+    }
+
+    public static CurrencyType GetCurrencyByID(FeatureModuleContext context, String currencyID) {
+        AccountBook book = context.getCurrentAccountBook();
+        if(book == null) return null;
+
+        CurrencyTable currencies = book.getCurrencies();
+        return currencies.getCurrencyByIDString(currencyID);
+    }
+
+    public static String FormatSuperFancy(long amount, CurrencyType currency) {
+        return currency.getIDString() + currency.formatFancy(amount, '.');
+    }
 }
