@@ -22,14 +22,28 @@ public class SampleWidget implements HomePageView {
     }
 
     private void createUI() {
-        panel = new JPanel(new BorderLayout());
+        panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(MoneydanceLAF.homePageBorder.getFillColor());
 
+        // Create and style the title label
+        JLabel titleLabel = new JLabel("Net Worth");
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 14f)); // Adjust font size and style
+        titleLabel.setForeground(Color.BLACK); // Set text color
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the title
+
+        // Optional: add some padding around the title
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Top, left, bottom, right padding
+
+        panel.add(titleLabel);
+
         usdLabel = new JLabel("USD");
-        panel.add(usdLabel, BorderLayout.CENTER);
+        usdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(usdLabel);
 
         mxnLabel = new JLabel("MXN");
-        panel.add(mxnLabel, BorderLayout.AFTER_LAST_LINE);
+        mxnLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(mxnLabel);
 
         refresh();
     }
