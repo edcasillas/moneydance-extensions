@@ -4,6 +4,7 @@
 
 package com.moneydance.modules.features.myextension;
 
+import com.ecasillas.moneydance.ActionWithArg;
 import com.infinitekind.moneydance.model.Account;
 import com.infinitekind.moneydance.model.AccountBook;
 import com.infinitekind.moneydance.model.CurrencyTable;
@@ -13,8 +14,8 @@ import com.moneydance.apps.md.controller.FeatureModuleContext;
 
 import java.io.*;
 import java.awt.*;
+import java.util.concurrent.atomic.AtomicLong;
 
-import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 
 /** Pluggable module used to give users access to a Account List
@@ -116,6 +117,7 @@ public class Main
       Account rootAccount = book.getRootAccount();
       acctStr.append(rootAccount.getFullAccountName());
       acctStr.append("\n");
+
       addSubAccounts(book.getRootAccount(), acctStr, 1);
 
       acctStr.append("\n");
@@ -126,6 +128,23 @@ public class Main
       acctStr.append("Main currency: " + mainCurrency.getIDString() + "\n");
       acctStr.append("Main to Peso rate: " + mainCurrency.getRate(pesoCurrency) + "\n");
       acctStr.append("Peso to main rate: " + pesoCurrency.getRate(mainCurrency) + "\n");
+
+      AtomicLong totalBalance = new AtomicLong();
+      iterateSubAccounts(book.getRootAccount(), account -> {
+        long b = convertBalance(account.getBalance(), account.getCurrencyType(), mainCurrency);
+        totalBalance.addAndGet(b);
+      });
+
+      acctStr.append("\n");
+      acctStr.append("TOTAL");
+      acctStr.append(" ");
+      acctStr.append(mainCurrency.getIDString());
+      acctStr.append(mainCurrency.formatFancy(totalBalance.get(), '.'));
+
+      acctStr.append("\n");
+      acctStr.append(" ");
+      acctStr.append(pesoCurrency.getIDString());
+      acctStr.append(pesoCurrency.formatFancy(convertBalance(totalBalance.get(), mainCurrency, pesoCurrency), '.'));
     }
     return acctStr;
   }
@@ -141,14 +160,14 @@ public class Main
       }
 
       acctStr.append(" ".repeat(Math.max(0, indentLevel + 1)));
-      appendAccountText(acctStr, acct);
+      appendAccountData(acct, acctStr);
 
       acctStr.append("\n");
       addSubAccounts(acct, acctStr, indentLevel + 1);
     }
   }
 
-  private void appendAccountText(StringBuffer sb, Account account){
+  private void appendAccountData(Account account, StringBuffer sb){
     CurrencyType currencyType = account.getCurrencyType();
     long balance = account.getBalance();
 
@@ -158,17 +177,23 @@ public class Main
     sb.append("): ");
     sb.append(currencyType.getIDString());
     sb.append(currencyType.formatFancy(balance, '.'));
-    sb.append(" " + currencyType.getDecimalPlaces());
 
     CurrencyType mainCurrency = getMainCurrencyType();
     if(currencyType != mainCurrency) {
       sb.append(" - ");
-      double convertibleBalance = balance / pow(10, currencyType.getDecimalPlaces());
-      double convertedBalance = mainCurrency.getRate(currencyType) * convertibleBalance;
-      long parsedConvertedBalance = mainCurrency.parse(Double.toString(convertedBalance), '.');
+      long parsedConvertedBalance = convertBalance(balance, currencyType, mainCurrency);
       sb.append(mainCurrency.getIDString());
       sb.append(mainCurrency.formatFancy(parsedConvertedBalance, '.'));
     }
+  }
+
+  private long convertBalance(long balance, CurrencyType from, CurrencyType to) {
+    if (from == to) {
+      return balance;
+    }
+    double convertibleBalance = balance / pow(10, from.getDecimalPlaces());
+    double convertedBalance = to.getRate(from) * convertibleBalance;
+    return to.parse(Double.toString(convertedBalance), '.');
   }
 
   private CurrencyType getMainCurrencyType(){
@@ -176,6 +201,20 @@ public class Main
     CurrencyTable currencies = book.getCurrencies();
     CurrencyType mainCurrency = currencies.getBaseType();
     return mainCurrency;
+  }
+
+  private void iterateSubAccounts(Account parent, ActionWithArg<Account> action) {
+    int sz = parent.getSubAccountCount();
+    for(int i=0; i<sz; i++) {
+      Account acct = parent.getSubAccount(i);
+      Account.AccountType acctType = acct.getAccountType();
+
+      if(acctType == Account.AccountType.EXPENSE || acctType == Account.AccountType.INCOME){
+        continue;
+      }
+      action.Invoke(acct);
+      iterateSubAccounts(acct, action);
+    }
   }
 
   private double calculateNetWorthInPesos(StringBuffer sb) {
