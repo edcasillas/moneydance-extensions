@@ -4,7 +4,7 @@
 
 package com.moneydance.modules.features.myextension;
 
-import com.ecasillas.moneydance.ActionWithArg;
+import com.ecasillas.moneydance.Utils;
 import com.infinitekind.moneydance.model.Account;
 import com.infinitekind.moneydance.model.AccountBook;
 import com.infinitekind.moneydance.model.CurrencyTable;
@@ -12,11 +12,8 @@ import com.infinitekind.moneydance.model.CurrencyType;
 import com.moneydance.apps.md.controller.FeatureModule;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 
-import java.io.*;
 import java.awt.*;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static java.lang.Math.pow;
+import java.io.ByteArrayOutputStream;
 
 /** Pluggable module used to give users access to a Account List
     interface to Moneydance.
@@ -130,22 +127,18 @@ public class Main
       acctStr.append("Main to Peso rate: " + mainCurrency.getRate(pesoCurrency) + "\n");
       acctStr.append("Peso to main rate: " + pesoCurrency.getRate(mainCurrency) + "\n");
 
-      AtomicLong totalBalance = new AtomicLong();
-      iterateSubAccounts(book.getRootAccount(), account -> {
-        long b = convertBalance(account.getBalance(), account.getCurrencyType(), mainCurrency);
-        totalBalance.addAndGet(b);
-      });
+      long totalBalance = Utils.GetTotalBalance(getContext());
 
       acctStr.append("\n");
       acctStr.append("TOTAL");
       acctStr.append(" ");
       acctStr.append(mainCurrency.getIDString());
-      acctStr.append(mainCurrency.formatFancy(totalBalance.get(), '.'));
+      acctStr.append(mainCurrency.formatFancy(totalBalance, '.'));
 
       acctStr.append("\n");
       acctStr.append(" ");
       acctStr.append(pesoCurrency.getIDString());
-      acctStr.append(pesoCurrency.formatFancy(convertBalance(totalBalance.get(), mainCurrency, pesoCurrency), '.'));
+      acctStr.append(pesoCurrency.formatFancy(Utils.ConvertBalance(totalBalance, mainCurrency, pesoCurrency), '.'));
     }
     return acctStr;
   }
@@ -182,19 +175,10 @@ public class Main
     CurrencyType mainCurrency = getMainCurrencyType();
     if(currencyType != mainCurrency) {
       sb.append(" - ");
-      long parsedConvertedBalance = convertBalance(balance, currencyType, mainCurrency);
+      long parsedConvertedBalance = Utils.ConvertBalance(balance, currencyType, mainCurrency);
       sb.append(mainCurrency.getIDString());
       sb.append(mainCurrency.formatFancy(parsedConvertedBalance, '.'));
     }
-  }
-
-  private long convertBalance(long balance, CurrencyType from, CurrencyType to) {
-    if (from == to) {
-      return balance;
-    }
-    double convertibleBalance = balance / pow(10, from.getDecimalPlaces());
-    double convertedBalance = to.getRate(from) * convertibleBalance;
-    return to.parse(Double.toString(convertedBalance), '.');
   }
 
   private CurrencyType getMainCurrencyType(){
@@ -203,40 +187,6 @@ public class Main
     CurrencyType mainCurrency = currencies.getBaseType();
     return mainCurrency;
   }
-
-  private void iterateSubAccounts(Account parent, ActionWithArg<Account> action) {
-    int sz = parent.getSubAccountCount();
-    for(int i=0; i<sz; i++) {
-      Account acct = parent.getSubAccount(i);
-      Account.AccountType acctType = acct.getAccountType();
-
-      if(acctType == Account.AccountType.EXPENSE || acctType == Account.AccountType.INCOME){
-        continue;
-      }
-      action.Invoke(acct);
-      iterateSubAccounts(acct, action);
-    }
-  }
-
-  private double calculateNetWorthInPesos(StringBuffer sb) {
-    double netWorthInPesos = 0.0;
-    AccountBook book = getContext().getCurrentAccountBook();
-    CurrencyTable currencies = book.getCurrencies();
-    CurrencyType mainCurrency = currencies.getBaseType();
-    CurrencyType pesoCurrency = currencies.getCurrencyByIDString("MXN"); // Assuming "MXN" is the correct ID for Mexican Pesos
-
-    for (Account account : book.getRootAccount().getSubAccounts()) {
-      double balance = account.getBalance();
-      if (!account.getCurrencyType().equals(pesoCurrency)) {
-        // Convert balance to pesos
-        balance = mainCurrency.getRate(pesoCurrency) * balance;
-      }
-      netWorthInPesos += balance;
-    }
-
-    return netWorthInPesos;
-  }
-
 }
 
 

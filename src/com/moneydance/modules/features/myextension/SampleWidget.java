@@ -1,5 +1,6 @@
 package com.moneydance.modules.features.myextension;
 
+import com.ecasillas.moneydance.Utils;
 import com.infinitekind.moneydance.model.AccountBook;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 import com.moneydance.apps.md.view.HomePageView;
@@ -21,7 +22,8 @@ public class SampleWidget implements HomePageView {
     private void createUI() {
         panel = new JPanel(new BorderLayout());
         panel.setBackground(MoneydanceLAF.homePageBorder.getFillColor());
-        label = new JLabel("This will show something");
+        long balance = Utils.GetTotalBalance(context);
+        label = new JLabel("This will show something " + balance);
         panel.add(label, BorderLayout.CENTER);
     }
 
