@@ -35,6 +35,7 @@ public class Main
       context.registerFeature(this, "showconsole",
         getIcon("accountlist"),
         getName());
+      context.registerHomePageView(this, new SampleWidget(context));
     }
     catch (Exception e) {
       e.printStackTrace(System.err);
