@@ -1,3 +1,11 @@
+FORUM
+https://infinitekind.tenderapp.com/discussions/moneydance-development
+
+WIKI
+https://github.com/mrbray99/moneydanceproduction/wiki
+
+ORIGINAL README
+-
 
 DESCRIPTION
 
