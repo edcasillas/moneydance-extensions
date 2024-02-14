@@ -2,12 +2,31 @@ package com.ecasillas.moneydance;
 
 import com.infinitekind.moneydance.model.*;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
+import com.moneydance.apps.md.controller.Main;
+import com.moneydance.apps.md.view.MoneydanceUI;
+import com.moneydance.apps.md.view.gui.MoneydanceGUI;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 import static java.lang.Math.pow;
 
 public class Utils {
+    public static Main GetMain(FeatureModuleContext context) {
+        if(context instanceof Main) return (Main) context;
+        return null;
+    }
+
+    public static MoneydanceGUI GetGUI(FeatureModuleContext context) {
+        Main main = GetMain(context);
+        if(main != null) {
+            MoneydanceUI ui = main.getUI();
+            if(ui instanceof MoneydanceGUI){
+                return (MoneydanceGUI) ui;
+            }
+        }
+        return null;
+    }
+
     public static void IterateSubAccounts(Account parent, ActionWithArg<Account> action) {
         int sz = parent.getSubAccountCount();
         for(int i=0; i<sz; i++) {

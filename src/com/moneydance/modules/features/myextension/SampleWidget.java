@@ -4,7 +4,11 @@ import com.ecasillas.moneydance.Utils;
 import com.infinitekind.moneydance.model.AccountBook;
 import com.infinitekind.moneydance.model.CurrencyType;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
+import com.moneydance.apps.md.controller.Main;
+import com.moneydance.apps.md.controller.Util;
 import com.moneydance.apps.md.view.HomePageView;
+import com.moneydance.apps.md.view.gui.MoneydanceGUI;
+import com.moneydance.apps.md.view.gui.MoneydanceLAF;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,38 +25,57 @@ public class SampleWidget implements HomePageView {
     }
 
     private void createUI() {
+        //MoneydanceGUI gui = Utils.GetGUI(context);
+        //com.moneydance.apps.md.view.gui.MDFonts fonts = gui.getFonts(); // FIXME Does not work because MDFonts is not public
+        // if(gui == null) return; // TODO Handle error!
+
         // TODO How do I get a nice-looking box like the "Bank Accounts" widget?
-        panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel = new JPanel(new GridBagLayout());
+        panel.setOpaque(false);
+        panel.setBorder(MoneydanceLAF.homePageBorder);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; // Column
+        gbc.gridy = 0; // Row
+        gbc.gridwidth = GridBagConstraints.REMAINDER; // Span across all columns
+        gbc.anchor = GridBagConstraints.NORTH; // Anchor north (top of the space)
+        gbc.insets = new Insets(10, 10, 5, 10); // Top, left, bottom, right padding for the title
 
         //panel.setBackground(MoneydanceLAF.homePageBorder.getFillColor());
         // Manually selected color; adjust as needed to match Moneydance's theme
-        Color backgroundColor = new Color(230, 230, 230); // A light gray as an example
-        panel.setBackground(backgroundColor);
+        //Color backgroundColor = new Color(230, 230, 230); // A light gray as an example
+        //panel.setBackground(backgroundColor);
 
         // Apply a border to mimic Moneydance's widget styling
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY, 1), // Line border color
-                BorderFactory.createEmptyBorder(10, 10, 10, 10))); // Padding
+        //panel.setBorder(BorderFactory.createCompoundBorder(
+        //        BorderFactory.createLineBorder(Color.GRAY, 1), // Line border color
+        //        BorderFactory.createEmptyBorder(10, 10, 10, 10))); // Padding
 
         // Create and style the title label
         JLabel titleLabel = new JLabel("Net Worth");
-        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 14f)); // Adjust font size and style
+
+        titleLabel.setFont(//gui.getFonts()
+                titleLabel.getFont().deriveFont(Font.BOLD, 14f)); // Adjust font size and style
         titleLabel.setForeground(new Color(104, 118, 120)); // Set text color
-        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the title
+        //titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the title
 
         // Optional: add some padding around the title
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Top, left, bottom, right padding
+        //titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Top, left, bottom, right padding
 
-        panel.add(titleLabel);
+        panel.add(titleLabel, gbc);
+
+        gbc.gridy++; // Move to the next row for the USD label
+        gbc.insets = new Insets(5, 10, 5, 10); // Adjust padding as needed
 
         usdLabel = new JLabel("USD");
-        usdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(usdLabel);
+        //usdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(usdLabel, gbc);
+
+        gbc.gridy++; // Move to the next row for the MXN label
 
         mxnLabel = new JLabel("MXN");
-        mxnLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(mxnLabel);
+        // mxnLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(mxnLabel, gbc);
 
         refresh();
     }

@@ -11,6 +11,7 @@ import com.infinitekind.moneydance.model.CurrencyTable;
 import com.infinitekind.moneydance.model.CurrencyType;
 import com.moneydance.apps.md.controller.FeatureModule;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
+import com.moneydance.apps.md.view.MoneydanceUI;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
@@ -88,8 +89,6 @@ public class Main
   private synchronized void showConsole() {
     if(consoleWindow ==null) {
       StringBuffer sb = getAccountsStringBuffer();
-      //StringBuffer sb = new StringBuffer();
-      //double netWorth = calculateNetWorthInPesos(sb);
       consoleWindow = new ConsoleWindow("Account List Console", this::closeConsole, sb);
       consoleWindow.setVisible(true);
     }
@@ -111,6 +110,7 @@ public class Main
   private StringBuffer getAccountsStringBuffer() {
     AccountBook book = getContext().getCurrentAccountBook();
     StringBuffer acctStr = new StringBuffer();
+
     if(book != null) {
       Account rootAccount = book.getRootAccount();
       acctStr.append(rootAccount.getFullAccountName());
