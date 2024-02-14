@@ -41,16 +41,6 @@ public class SampleWidget implements HomePageView {
         gbc.anchor = GridBagConstraints.NORTH; // Anchor north (top of the space)
         gbc.insets = new Insets(10, 10, 5, 10); // Top, left, bottom, right padding for the title
 
-        //panel.setBackground(MoneydanceLAF.homePageBorder.getFillColor());
-        // Manually selected color; adjust as needed to match Moneydance's theme
-        //Color backgroundColor = new Color(230, 230, 230); // A light gray as an example
-        //panel.setBackground(backgroundColor);
-
-        // Apply a border to mimic Moneydance's widget styling
-        //panel.setBorder(BorderFactory.createCompoundBorder(
-        //        BorderFactory.createLineBorder(Color.GRAY, 1), // Line border color
-        //        BorderFactory.createEmptyBorder(10, 10, 10, 10))); // Padding
-
         // Create and style the title label
         JLabel titleLabel = new JLabel("Net Worth");
 
