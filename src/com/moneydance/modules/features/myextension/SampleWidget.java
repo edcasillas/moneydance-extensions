@@ -3,6 +3,8 @@ package com.moneydance.modules.features.myextension;
 import com.ecasillas.moneydance.Utils;
 import com.infinitekind.moneydance.model.AccountBook;
 import com.infinitekind.moneydance.model.CurrencyType;
+import com.infinitekind.moneydance.model.NetWorthCalculator;
+import com.infinitekind.moneydance.model.TotalAmount;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 import com.moneydance.apps.md.view.HomePageView;
 import com.moneydance.apps.md.view.gui.MDFonts;
@@ -45,8 +47,7 @@ public class SampleWidget implements HomePageView {
         // Create and style the title label
         JLabel titleLabel = new JLabel("Net Worth");
 
-        titleLabel.setFont(//gui.getFonts()
-                titleLabel.getFont().deriveFont(Font.BOLD, 14f)); // Adjust font size and style
+        titleLabel.setFont(mdGUI.getFonts().header);
         titleLabel.setForeground(new Color(104, 118, 120)); // Set text color
 
         panel.add(titleLabel, gbc);
@@ -55,6 +56,7 @@ public class SampleWidget implements HomePageView {
         gbc.insets = new Insets(5, 10, 5, 10); // Adjust padding as needed
 
         usdLabel = new JLabel("USD");
+        usdLabel.setFont(mdGUI.getFonts().defaultText);
         //usdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(usdLabel, gbc);
 
@@ -89,7 +91,23 @@ public class SampleWidget implements HomePageView {
 
     @Override
     public void refresh() {
-        long balance = Utils.GetTotalBalance(context);
+        NetWorthCalculator calculator = Utils.CreateNetworthCalculator(context);
+        if(calculator == null) {
+            // TODO Handle null
+            return;
+        }
+
+        TotalAmount netWorth = calculator.calculateTotal();
+
+        usdLabel.setText(Utils.FormatSuperFancy(netWorth.getAmount(), netWorth.getCurrency()));
+
+        CurrencyType pesoCurrency = Utils.GetCurrencyByID(context,"MXN");
+        // TODO Check null!
+
+        TotalAmount netWorthInPesos = netWorth.convertToCurrency(pesoCurrency);
+        mxnLabel.setText(Utils.FormatSuperFancy(netWorthInPesos.getAmount(), netWorthInPesos.getCurrency()));
+
+        /*long balance = Utils.GetTotalBalance(context);
         CurrencyType baseCurrency = Utils.GetBaseCurrency(context);
 
         if(baseCurrency == null) {
@@ -109,7 +127,9 @@ public class SampleWidget implements HomePageView {
 
         mxnLabel.setText(Utils.FormatSuperFancy(convertedBalance, pesoCurrency));
 
-        exchangeRateLabel.setText("USD$ 1.00 = MXN$ " + pesoCurrency.getRate(baseCurrency));
+         */
+
+        exchangeRateLabel.setText("USD$ 1.00 = MXN$ " + pesoCurrency.getRate(Utils.GetBaseCurrency(context)));
     }
 
     @Override

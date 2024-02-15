@@ -3,6 +3,7 @@ package com.ecasillas.moneydance;
 import com.infinitekind.moneydance.model.*;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
 import com.moneydance.apps.md.controller.Main;
+import com.moneydance.apps.md.controller.UserPreferences;
 import com.moneydance.apps.md.view.MoneydanceUI;
 import com.moneydance.apps.md.view.gui.MoneydanceGUI;
 
@@ -55,20 +56,31 @@ public class Utils {
      * @return
      */
     public static long GetTotalBalance(FeatureModuleContext context){
+        NetWorthCalculator calculator = CreateNetworthCalculator(context);
+        if(calculator == null) return 0;
+
+        TotalAmount totalAmount = calculator.calculateTotal();
+
+        return totalAmount.getAmount();
+    }
+
+    /**
+     * Factory method for NetWorthCalculator with default values.
+     * @param context The context to use during the creation of the object.
+     * @return An instance of NetWorthCalculator
+     */
+    public static NetWorthCalculator CreateNetworthCalculator(FeatureModuleContext context) {
         AccountBook book = context.getCurrentAccountBook();
-        if(book == null) return 0;
+        if(book == null) return null;
 
         CurrencyTable currencies = book.getCurrencies();
         CurrencyType mainCurrency = currencies.getBaseType();
+        NetWorthCalculator result = new NetWorthCalculator(book);
+        result.setCurrency(mainCurrency);
+        result.setBalanceType(Account.BalanceType.NORMAL);
+        result.setIgnoreInactiveAccounts(true);
 
-        AtomicLong totalBalance = new AtomicLong();
-
-        IterateSubAccounts(book.getRootAccount(), account -> {
-            long b = ConvertBalance(account.getBalance(), account.getCurrencyType(), mainCurrency);
-            totalBalance.addAndGet(b);
-        });
-
-        return totalBalance.get();
+        return result;
     }
 
     public static CurrencyType GetBaseCurrency(FeatureModuleContext context) {
@@ -88,6 +100,6 @@ public class Utils {
     }
 
     public static String FormatSuperFancy(long amount, CurrencyType currency) {
-        return currency.getIDString() + currency.formatFancy(amount, '.');
+        return currency.getIDString() + currency.formatFancy(amount, UserPreferences.getInstance().getDecimalChar());
     }
 }
