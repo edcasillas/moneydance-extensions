@@ -4,9 +4,8 @@ import com.ecasillas.moneydance.Utils;
 import com.infinitekind.moneydance.model.AccountBook;
 import com.infinitekind.moneydance.model.CurrencyType;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
-import com.moneydance.apps.md.controller.Main;
-import com.moneydance.apps.md.controller.Util;
 import com.moneydance.apps.md.view.HomePageView;
+import com.moneydance.apps.md.view.gui.MDFonts;
 import com.moneydance.apps.md.view.gui.MoneydanceGUI;
 import com.moneydance.apps.md.view.gui.MoneydanceLAF;
 
@@ -18,6 +17,7 @@ public class SampleWidget implements HomePageView {
     private JPanel panel;
     private JLabel usdLabel;
     private JLabel mxnLabel;
+    private JLabel exchangeRateLabel;
 
     public SampleWidget(FeatureModuleContext context) {
         this.context = context;
@@ -25,8 +25,9 @@ public class SampleWidget implements HomePageView {
     }
 
     private void createUI() {
-        //MoneydanceGUI gui = Utils.GetGUI(context);
-        //com.moneydance.apps.md.view.gui.MDFonts fonts = gui.getFonts(); // FIXME Does not work because MDFonts is not public
+        MoneydanceGUI mdGUI = Utils.GetGUI(context);
+        MDFonts fonts = mdGUI.getFonts();
+        //com.moneydance.apps.md.view.gui.MDFonts fonts = mdGUI.getFonts().mono; // FIXME Does not work because MDFonts is not public
         // if(gui == null) return; // TODO Handle error!
 
         // TODO How do I get a nice-looking box like the "Bank Accounts" widget?
@@ -47,10 +48,6 @@ public class SampleWidget implements HomePageView {
         titleLabel.setFont(//gui.getFonts()
                 titleLabel.getFont().deriveFont(Font.BOLD, 14f)); // Adjust font size and style
         titleLabel.setForeground(new Color(104, 118, 120)); // Set text color
-        //titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Center align the title
-
-        // Optional: add some padding around the title
-        //titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Top, left, bottom, right padding
 
         panel.add(titleLabel, gbc);
 
@@ -66,6 +63,11 @@ public class SampleWidget implements HomePageView {
         mxnLabel = new JLabel("MXN");
         // mxnLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(mxnLabel, gbc);
+
+        gbc.gridy++; // Move to the next row for the exchangeRateLabel
+        gbc.gridy++; // Move to the next row for the exchangeRateLabel
+        exchangeRateLabel = new JLabel("USD$ 1.00 = MXN$17");
+        panel.add(exchangeRateLabel);
 
         refresh();
     }
@@ -106,6 +108,8 @@ public class SampleWidget implements HomePageView {
         }
 
         mxnLabel.setText(Utils.FormatSuperFancy(convertedBalance, pesoCurrency));
+
+        exchangeRateLabel.setText("USD$ 1.00 = MXN$ " + pesoCurrency.getRate(baseCurrency));
     }
 
     @Override
