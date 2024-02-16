@@ -28,9 +28,9 @@ public class SampleWidget implements HomePageView {
 
     private void createUI() {
         MoneydanceGUI mdGUI = Utils.GetGUI(context);
+        if(mdGUI == null) return; // TODO Handle error!
+
         MDFonts fonts = mdGUI.getFonts();
-        //com.moneydance.apps.md.view.gui.MDFonts fonts = mdGUI.getFonts().mono; // FIXME Does not work because MDFonts is not public
-        // if(gui == null) return; // TODO Handle error!
 
         // TODO How do I get a nice-looking box like the "Bank Accounts" widget?
         panel = new JPanel(new GridBagLayout());
@@ -47,7 +47,7 @@ public class SampleWidget implements HomePageView {
         // Create and style the title label
         JLabel titleLabel = new JLabel("Net Worth");
 
-        titleLabel.setFont(mdGUI.getFonts().header);
+        titleLabel.setFont(fonts.header);
         titleLabel.setForeground(new Color(104, 118, 120)); // Set text color
 
         panel.add(titleLabel, gbc);
@@ -56,7 +56,7 @@ public class SampleWidget implements HomePageView {
         gbc.insets = new Insets(5, 10, 5, 10); // Adjust padding as needed
 
         usdLabel = new JLabel("USD");
-        usdLabel.setFont(mdGUI.getFonts().defaultText);
+        usdLabel.setFont(fonts.defaultText);
         //usdLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(usdLabel, gbc);
 
@@ -98,6 +98,8 @@ public class SampleWidget implements HomePageView {
         }
 
         TotalAmount netWorth = calculator.calculateTotal();
+
+        //netWorth.getCurrency().snap
 
         usdLabel.setText(Utils.FormatSuperFancy(netWorth.getAmount(), netWorth.getCurrency()));
 

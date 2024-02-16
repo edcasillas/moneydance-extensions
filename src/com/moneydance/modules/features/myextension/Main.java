@@ -1,7 +1,3 @@
-/************************************************************\
- *      Copyright (C) 2016 The Infinite Kind, Limited       *
-\************************************************************/
-
 package com.moneydance.modules.features.myextension;
 
 import com.ecasillas.moneydance.Utils;
@@ -110,11 +106,11 @@ public class Main
     StringBuffer acctStr = new StringBuffer();
 
     if(book != null) {
-      Account rootAccount = book.getRootAccount();
+      Account rootAccount = book.getRootAccount$core(); // book.getRootAccount();
       acctStr.append(rootAccount.getFullAccountName());
       acctStr.append("\n");
 
-      addSubAccounts(book.getRootAccount(), acctStr, 1);
+      addSubAccounts(rootAccount, acctStr, 1);
 
       acctStr.append("\n");
       CurrencyTable currencies = book.getCurrencies();

@@ -3,6 +3,10 @@ https://infinitekind.tenderapp.com/discussions/moneydance-development
 
 WIKI
 https://github.com/mrbray99/moneydanceproduction/wiki
+https://bitbucket.org/mikerb/moneydance-2019/wiki/Moneydance%20Information
+
+USER GUIDE
+https://infinitekind.zendesk.com/hc/en-us/articles/201220873-Moneydance-User-Guide
 
 ORIGINAL README
 -
