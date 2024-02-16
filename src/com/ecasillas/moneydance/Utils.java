@@ -76,6 +76,7 @@ public class Utils {
         CurrencyTable currencies = book.getCurrencies();
         CurrencyType mainCurrency = currencies.getBaseType();
         NetWorthCalculator result = new NetWorthCalculator(book);
+
         result.setCurrency(mainCurrency);
         result.setBalanceType(Account.BalanceType.NORMAL);
         result.setIgnoreInactiveAccounts(true);

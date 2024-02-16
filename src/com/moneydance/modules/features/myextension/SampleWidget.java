@@ -107,28 +107,6 @@ public class SampleWidget implements HomePageView {
         TotalAmount netWorthInPesos = netWorth.convertToCurrency(pesoCurrency);
         mxnLabel.setText(Utils.FormatSuperFancy(netWorthInPesos.getAmount(), netWorthInPesos.getCurrency()));
 
-        /*long balance = Utils.GetTotalBalance(context);
-        CurrencyType baseCurrency = Utils.GetBaseCurrency(context);
-
-        if(baseCurrency == null) {
-            // TODO Handle null
-            return;
-        }
-
-        usdLabel.setText(Utils.FormatSuperFancy(balance, baseCurrency));
-
-        CurrencyType pesoCurrency = Utils.GetCurrencyByID(context,"MXN");
-        long convertedBalance = Utils.ConvertBalance(balance, baseCurrency, pesoCurrency);
-
-        if(pesoCurrency == null) {
-            // TODO Handle null
-            return;
-        }
-
-        mxnLabel.setText(Utils.FormatSuperFancy(convertedBalance, pesoCurrency));
-
-         */
-
         exchangeRateLabel.setText("USD$ 1.00 = MXN$ " + pesoCurrency.getRate(Utils.GetBaseCurrency(context)));
     }
 

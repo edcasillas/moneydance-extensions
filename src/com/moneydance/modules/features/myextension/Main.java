@@ -11,15 +11,13 @@ import com.infinitekind.moneydance.model.CurrencyTable;
 import com.infinitekind.moneydance.model.CurrencyType;
 import com.moneydance.apps.md.controller.FeatureModule;
 import com.moneydance.apps.md.controller.FeatureModuleContext;
-import com.moneydance.apps.md.view.MoneydanceUI;
 
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 
-/** Pluggable module used to give users access to a Account List
-    interface to Moneydance.
-*/
-
+/**
+ * By Ed Casillas
+ */
 public class Main
   extends FeatureModule
 {
